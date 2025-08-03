@@ -1,18 +1,27 @@
 import React, { useState } from "react";
 import auth from "../../__auth_firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa6";
 
 const Login = () => {
   const [errMessage, seterrMessage] = useState("");
   const [successM, setSuccessM] = useState("");
+  const [showpassword, setShowpassword] = useState(false) 
 
   const hendelsubmit = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log(email, password);
+    const checkBox = e.target.terms.checked
+    console.log(email, password, checkBox);
     seterrMessage("");
     setSuccessM("")
+
+    if(!checkBox){
+      seterrMessage('Please allow ta checkbox')
+      return
+    }
 
     if(password.length < 6){
       seterrMessage('Password should be at least more then 6 character')
@@ -42,7 +51,7 @@ const Login = () => {
         <div className="hero bg-base-200 min-h-screen">
           <div className="hero-content flex-col lg:flex-row-reverse">
             <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-              <div className="card-body">
+              <div className="card-body ">
                 <fieldset className="fieldset">
                   <label className="label">Email</label>
                   <input
@@ -51,13 +60,24 @@ const Login = () => {
                     className="input"
                     placeholder="Email"
                   />
+                  
                   <label className="label">Password</label>
-                  <input
-                    type="password"
-                    className="input"
+                 <div className="relative">
+                     <input
+                    type={showpassword ? "text" : "password"}
+                    className="input pr-24"
                     placeholder="Password"
                     name="password"
                   />
+                  <button
+  type="button"
+  onClick={() => setShowpassword(!showpassword)}
+  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+>
+  {!showpassword ? <FaRegEye /> : <FaRegEyeSlash />}
+</button>
+                 </div>
+                 <input type="checkbox" name="terms" className="checkbox" />
                   <div>
                     <a className="link link-hover">Forgot password?</a>
                   </div>
