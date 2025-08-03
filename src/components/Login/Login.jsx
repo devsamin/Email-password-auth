@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
   const [errMessage, seterrMessage] = useState("");
+  const [successM, setSuccessM] = useState("");
 
   const hendelsubmit = (e) => {
     e.preventDefault();
@@ -11,10 +12,22 @@ const Login = () => {
     const password = e.target.password.value;
     console.log(email, password);
     seterrMessage("");
+    setSuccessM("")
+
+    if(password.length < 6){
+      seterrMessage('Password should be at least more then 6 character')
+      return
+    }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if(!passwordRegex.test(password)){
+      seterrMessage('Password must be at least one digit or one lower char and capital char one special char')
+      return
+    }
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
         console.log(res.user);
+        setSuccessM('Sign Up SuccessFully')
       })
       .catch((err) => {
         console.log(err);
@@ -50,6 +63,9 @@ const Login = () => {
                   </div>
                   <button className="btn btn-neutral mt-4">Login</button>
                   {errMessage && <p className="text-red-600">{errMessage}</p>}
+                  {
+                    successM && <p className="text-green-600">{successM}</p>
+                  }
                 </fieldset>
               </div>
             </div>
