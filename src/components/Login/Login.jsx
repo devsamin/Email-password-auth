@@ -1,10 +1,20 @@
 import React from "react";
+import auth from "../../__auth_firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
 
     const hendelsubmit = (e) =>{
         e.preventDefault()
-        console.log(e.target.email.value)
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        console.log(email, password)
+
+        createUserWithEmailAndPassword(auth, email, password)
+        .then(res => {
+          console.log(res.user)
+        })
+        .catch(err => console.log(err))
     }
   return (
     <div>
