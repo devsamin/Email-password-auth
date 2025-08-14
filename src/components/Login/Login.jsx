@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import auth from "../../__auth_firebase";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { Link } from "react-router-dom";
@@ -15,6 +15,9 @@ const Login = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
     const checkBox = e.target.terms.checked;
+    const name = e.target.name.value;
+    const photo = e.target.photo.value;
+console.log(name, photo)
     console.log(email, password, checkBox);
     seterrMessage("");
     setSuccessM("");
@@ -46,12 +49,26 @@ const Login = () => {
         sendEmailVerification(auth.currentUser)
         .then(()=>{
           console.log(" Verification email send....")
-        })
+        });
+        // update user profile
+          const profile = {
+            displayName : name,
+            photoURL : photo,
+          }
+
+          updateProfile(auth.currentUser, profile)
+          .then(()=>{
+            console.log("Profile Updated Successfully...")
+          })
+          .catch(err=>{
+            console.log("Invalid name and photo url", err)
+          })
       })
       .catch((err) => {
         console.log(err);
         seterrMessage(err.message);
       });
+      
   };
   return (
     <div>
@@ -63,6 +80,20 @@ const Login = () => {
             <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
               <div className="card-body ">
                 <fieldset className="fieldset">
+                  <label className="label">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    className="input"
+                    placeholder="name"
+                  />
+                  <label className="label">Photo Url</label>
+                  <input
+                    type="text"
+                    name="photo"
+                    className="input"
+                    placeholder="photo"
+                  />
                   <label className="label">Email</label>
                   <input
                     type="email"
