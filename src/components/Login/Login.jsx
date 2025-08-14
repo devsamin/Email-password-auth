@@ -1,42 +1,52 @@
 import React, { useState } from "react";
 import auth from "../../__auth_firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [errMessage, seterrMessage] = useState("");
   const [successM, setSuccessM] = useState("");
-  const [showpassword, setShowpassword] = useState(false) 
+  const [showpassword, setShowpassword] = useState(false);
 
   const hendelsubmit = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    const checkBox = e.target.terms.checked
+    const checkBox = e.target.terms.checked;
     console.log(email, password, checkBox);
     seterrMessage("");
-    setSuccessM("")
+    setSuccessM("");
 
-    if(!checkBox){
-      seterrMessage('Please allow ta checkbox')
-      return
+    if (!checkBox) {
+      seterrMessage("Please allow ta checkbox");
+      return;
     }
 
-    if(password.length < 6){
-      seterrMessage('Password should be at least more then 6 character')
-      return
+    if (password.length < 6) {
+      seterrMessage("Password should be at least more then 6 character");
+      return;
     }
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if(!passwordRegex.test(password)){
-      seterrMessage('Password must be at least one digit or one lower char and capital char one special char')
-      return
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      seterrMessage(
+        "Password must be at least one digit or one lower char and capital char one special char"
+      );
+      return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
         console.log(res.user);
-        setSuccessM('Sign Up SuccessFully')
+        setSuccessM("Sign Up SuccessFully");
+
+        // send verification email
+        sendEmailVerification(auth.currentUser)
+        .then(()=>{
+          console.log(" Verification email send....")
+        })
       })
       .catch((err) => {
         console.log(err);
@@ -60,32 +70,33 @@ const Login = () => {
                     className="input"
                     placeholder="Email"
                   />
-                  
+
                   <label className="label">Password</label>
-                 <div className="relative">
-                     <input
-                    type={showpassword ? "text" : "password"}
-                    className="input pr-24"
-                    placeholder="Password"
-                    name="password"
-                  />
-                  <button
-  type="button"
-  onClick={() => setShowpassword(!showpassword)}
-  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
->
-  {!showpassword ? <FaRegEye /> : <FaRegEyeSlash />}
-</button>
-                 </div>
-                 <input type="checkbox" name="terms" className="checkbox" />
+                  <div className="relative">
+                    <input
+                      type={showpassword ? "text" : "password"}
+                      className="input pr-24"
+                      placeholder="Password"
+                      name="password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowpassword(!showpassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                    >
+                      {!showpassword ? <FaRegEye /> : <FaRegEyeSlash />}
+                    </button>
+                  </div>
+                  <input type="checkbox" name="terms" className="checkbox" />
                   <div>
                     <a className="link link-hover">Forgot password?</a>
                   </div>
                   <button className="btn btn-neutral mt-4">Login</button>
                   {errMessage && <p className="text-red-600">{errMessage}</p>}
-                  {
-                    successM && <p className="text-green-600">{successM}</p>
-                  }
+                  {successM && <p className="text-green-600">{successM}</p>}
+                  <p>
+                    Already heave an accout <Link to={"/login2"}>Login</Link>
+                  </p>
                 </fieldset>
               </div>
             </div>
